@@ -68,6 +68,53 @@ export class Service {
         }
     }
 
+    async likePost(postId: string, likesArray: string[]) {
+        try{
+            const updatePost = await this.database.updateDocument(
+                conf.databaseId, conf.postsCollectionId, postId, {
+                    likes: likesArray
+                }
+            )
+
+            if(!updatePost) throw Error;
+
+            return updatePost;
+        }catch(error) {
+            console.log(error);
+        }
+    }
+
+    async savePost(postId: string, userId: string) {
+        try{
+            const updatePost = await this.database.createDocument(
+                conf.databaseId, conf.savesCollectionId, ID.unique(), {
+                    user: userId, 
+                    post: postId
+                } 
+            )
+
+            if(!updatePost) throw Error;
+
+            return updatePost;
+        }catch(error) {
+            console.log(error);
+        }
+    }
+
+    async deleteSavedPost(savedRecordId: string) {
+        try{
+            const statusCode = await this.database.deleteDocument(
+                conf.databaseId, conf.savesCollectionId, savedRecordId
+            )
+
+            if(!statusCode) throw Error;
+
+            return statusCode;
+        }catch(error) {
+            console.log(error);
+        }
+    }
+
     // upload file
     async uploadFile(file: File) {
         try{
@@ -100,7 +147,6 @@ export class Service {
             return error;
         }
     }
-
 }
 
 const service = new Service();
